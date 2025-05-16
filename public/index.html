@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- ✅ 줌 방지용 viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Anonymous Chat</title>
   <style>
@@ -38,10 +37,10 @@
     #input {
       flex: 1;
       background: #111;
-      color: #33ff99;
+      color: #33ff99; /* 초기값, 나중에 JS에서 고유 색으로 바뀜 */
       border: none;
       padding: 0.5rem;
-      font-size: 16px; /* ✅ 모바일 줌 방지 */
+      font-size: 16px;
     }
 
     #input:focus {
@@ -52,7 +51,7 @@
       background: none;
       border: none;
       color: red;
-      font-size: 16px; /* ✅ 모바일 줌 방지 */
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
       padding: 0.5rem 1rem;
@@ -76,12 +75,22 @@
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
 
+    let myColor = '#33ff99'; // 기본 색
+
     socket.on('message', function(data) {
       const item = document.createElement('div');
       item.textContent = data.text || data;
+
       if (data.color) {
         item.style.color = data.color;
+
+        // 내가 join한 메시지면 고유 색 저장 & 입력창 색 변경
+        if (data.text && data.text.includes('has joined the chat')) {
+          myColor = data.color;
+          input.style.color = myColor;
+        }
       }
+
       messages.appendChild(item);
       messages.scrollTop = messages.scrollHeight;
     });
