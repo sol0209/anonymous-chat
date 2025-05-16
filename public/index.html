@@ -37,7 +37,7 @@
     #input {
       flex: 1;
       background: #111;
-      color: #33ff99; /* 초기값, 나중에 JS에서 고유 색으로 바뀜 */
+      color: #33ff99;
       border: none;
       padding: 0.5rem;
       font-size: 16px;
@@ -75,7 +75,7 @@
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
 
-    let myColor = '#33ff99'; // 기본 색
+    let myColor = '#33ff99';
 
     socket.on('message', function(data) {
       const item = document.createElement('div');
@@ -84,7 +84,6 @@
       if (data.color) {
         item.style.color = data.color;
 
-        // 내가 join한 메시지면 고유 색 저장 & 입력창 색 변경
         if (data.text && data.text.includes('has joined the chat')) {
           myColor = data.color;
           input.style.color = myColor;
