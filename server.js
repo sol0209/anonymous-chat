@@ -8,12 +8,19 @@ const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ✅ 쟁한 색상 위주로 20가지 고유 색상 정의
 function getRandomColor() {
-  const colors = ['#ff6b6b', '#6bc5ff', '#81f495', '#ffe66d', '#d3a4ff', '#ff9f80'];
+  const colors = [
+    '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
+    '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe',
+    '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000',
+    '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080'
+  ];
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
-const messagesByRoom = {}; // Store chat history per room
+// ✅ 방마다 메시지를 저장하는 객체
+const messagesByRoom = {};
 
 io.on('connection', (socket) => {
   const anonId = 'Anon' + Math.floor(Math.random() * 1000);
@@ -25,6 +32,7 @@ io.on('connection', (socket) => {
   socket.on('join', (roomId) => {
     socket.join(roomId);
 
+    // ✅ 이전 메시지 전송
     if (messagesByRoom[roomId]) {
       messagesByRoom[roomId].forEach((msg) => {
         socket.emit('message', msg);
@@ -37,6 +45,8 @@ io.on('connection', (socket) => {
     };
 
     io.to(roomId).emit('message', joinMsg);
+
+    // ✅ 메시지 저장
     messagesByRoom[roomId] = messagesByRoom[roomId] || [];
     messagesByRoom[roomId].push(joinMsg);
   });
@@ -69,3 +79,4 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server running on ${PORT}`));
+
