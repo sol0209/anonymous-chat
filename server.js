@@ -8,7 +8,7 @@ const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ 쨍한 RGB 원색 계열 색상 15가지
+// ✅ 쨍한 RGB 원색 계열 15가지
 function getRandomColor() {
   const colors = [
     '#FF0000', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF',
@@ -16,6 +16,12 @@ function getRandomColor() {
     '#98FB98', '#FF77FF', '#0BDA51', '#7FFFD4', '#FFEF00'
   ];
   return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// ✅ 시간 포맷 함수 (HH:MM)
+function getCurrentTime() {
+  const now = new Date();
+  return now.toTimeString().slice(0, 5); // "HH:MM"
 }
 
 const messagesByRoom = {};
@@ -30,6 +36,7 @@ io.on('connection', (socket) => {
   socket.on('join', (roomId) => {
     socket.join(roomId);
 
+    // ✅ 이전 대화 전송
     if (messagesByRoom[roomId]) {
       messagesByRoom[roomId].forEach((msg) => {
         socket.emit('message', msg);
@@ -37,18 +44,19 @@ io.on('connection', (socket) => {
     }
 
     const joinMsg = {
-      text: `${anonId} has joined the chat.`,
+      text: `[${getCurrentTime()}] ${anonId} has joined the chat.`,
       color: userColor,
     };
 
     io.to(roomId).emit('message', joinMsg);
+
     messagesByRoom[roomId] = messagesByRoom[roomId] || [];
     messagesByRoom[roomId].push(joinMsg);
   });
 
   socket.on('chat', ({ roomId, msg }) => {
     const chatMsg = {
-      text: `[${anonId}]: ${msg}`,
+      text: `[${getCurrentTime()}] [${anonId}]: ${msg}`,
       color: userColor,
     };
 
@@ -60,7 +68,7 @@ io.on('connection', (socket) => {
     for (const room of socket.rooms) {
       if (room !== socket.id) {
         const leaveMsg = {
-          text: `${anonId} has left the chat.`,
+          text: `[${getCurrentTime()}] ${anonId} has left the chat.`,
           color: userColor,
         };
 
@@ -74,3 +82,4 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server running on ${PORT}`));
+
