@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ✅ 쨍한 RGB 원색 계열 15가지
 function getRandomColor() {
   const colors = [
-    '#FF0000', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF',
+    '#FF0000', '#FFFF00', '#00FFFF', '#FF00FF',
     '#00FF00', '#FF2400', '#00FFFF', '#FF00FF', '#FF00AF',
     '#98FB98', '#FF77FF', '#0BDA51', '#7FFFD4', '#FFEF00'
   ];
