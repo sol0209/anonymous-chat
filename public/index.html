@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Anonymous Chat</title>
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      max-width: 100%;
+      overflow-x: hidden;
       background-color: black;
       color: #33ff99;
       font-family: monospace;
@@ -14,25 +17,47 @@
       flex-direction: column;
       height: 100vh;
     }
+
     #messages {
       flex: 1;
       padding: 1rem;
       overflow-y: auto;
       white-space: pre-line;
+      word-break: break-word;
     }
+
     #form {
       display: flex;
+      flex-wrap: nowrap;
       padding: 1rem;
+      gap: 0.5rem;
+      box-sizing: border-box;
     }
+
     #input {
       flex: 1;
       background: #111;
       color: #33ff99;
       border: none;
       padding: 0.5rem;
+      font-size: 1rem;
     }
+
     #input:focus {
       outline: none;
+    }
+
+    button {
+      background-color: #33ff99;
+      color: black;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #55ffbb;
     }
   </style>
 </head>
@@ -42,6 +67,7 @@
     <input id="input" autocomplete="off" placeholder="Type your message..." />
     <button type="submit">Send</button>
   </form>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
@@ -52,9 +78,12 @@
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
 
-    socket.on('message', function(msg) {
+    socket.on('message', function(data) {
       const item = document.createElement('div');
-      item.textContent = msg;
+      item.textContent = data.text || data;
+      if (data.color) {
+        item.style.color = data.color;
+      }
       messages.appendChild(item);
       messages.scrollTop = messages.scrollHeight;
     });
@@ -69,3 +98,4 @@
   </script>
 </body>
 </html>
+
