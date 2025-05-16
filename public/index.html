@@ -1,1 +1,70 @@
-<html><body>hello</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anonymous Chat</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: #33ff99;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      white-space: pre-line;
+    }
+    #form {
+      display: flex;
+      padding: 1rem;
+    }
+    #input {
+      flex: 1;
+      background: #111;
+      color: #33ff99;
+      border: none;
+      padding: 0.5rem;
+    }
+    #input:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="messages"></div>
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Type your message..." />
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const roomId = window.location.pathname.split('/').pop();
+    socket.emit('join', roomId);
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    socket.on('message', function(msg) {
+      const item = document.createElement('div');
+      item.textContent = msg;
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('chat', { roomId, msg: input.value });
+        input.value = '';
+      }
+    });
+  </script>
+</body>
+</html>
