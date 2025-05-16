@@ -13,6 +13,8 @@ function getRandomColor() {
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
+const messagesByRoom = {}; // Store chat history per room
+
 io.on('connection', (socket) => {
   const anonId = 'Anon' + Math.floor(Math.random() * 1000);
   const userColor = getRandomColor();
@@ -22,26 +24,44 @@ io.on('connection', (socket) => {
 
   socket.on('join', (roomId) => {
     socket.join(roomId);
-    io.to(roomId).emit('message', {
+
+    if (messagesByRoom[roomId]) {
+      messagesByRoom[roomId].forEach((msg) => {
+        socket.emit('message', msg);
+      });
+    }
+
+    const joinMsg = {
       text: `${anonId} has joined the chat.`,
-      color: userColor
-    });
+      color: userColor,
+    };
+
+    io.to(roomId).emit('message', joinMsg);
+    messagesByRoom[roomId] = messagesByRoom[roomId] || [];
+    messagesByRoom[roomId].push(joinMsg);
   });
 
   socket.on('chat', ({ roomId, msg }) => {
-    io.to(roomId).emit('message', {
+    const chatMsg = {
       text: `[${anonId}]: ${msg}`,
-      color: userColor
-    });
+      color: userColor,
+    };
+
+    io.to(roomId).emit('message', chatMsg);
+    messagesByRoom[roomId].push(chatMsg);
   });
 
   socket.on('disconnecting', () => {
     for (const room of socket.rooms) {
       if (room !== socket.id) {
-        socket.to(room).emit('message', {
+        const leaveMsg = {
           text: `${anonId} has left the chat.`,
-          color: userColor
-        });
+          color: userColor,
+        };
+
+        socket.to(room).emit('message', leaveMsg);
+        messagesByRoom[room] = messagesByRoom[room] || [];
+        messagesByRoom[room].push(leaveMsg);
       }
     }
   });
