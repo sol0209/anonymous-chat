@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Anonymous Chat</title>
   <style>
     html, body {
@@ -40,26 +40,22 @@
       color: #33ff99;
       border: none;
       padding: 0.5rem;
-      font-size: 1rem;
+      font-size: 16px;
     }
 
     #input:focus {
       outline: none;
     }
 
-    button {
-      background-color: #33ff99;
-      color: black;
-      border: none;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #55ffbb;
-    }
-  </style>
+button {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+}
 </head>
 <body>
   <div id="messages"></div>
