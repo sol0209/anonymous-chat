@@ -37,7 +37,7 @@
     #input {
       flex: 1;
       background: #111;
-      color: #33ff99;
+      color: white; /* ✅ 입력창 텍스트 흰색 고정 */
       border: none;
       padding: 0.5rem;
       font-size: 16px;
@@ -86,7 +86,6 @@
 
         if (data.text && data.text.includes('has joined the chat')) {
           myColor = data.color;
-          input.style.color = myColor;
         }
       }
 
